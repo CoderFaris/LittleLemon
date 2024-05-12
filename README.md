@@ -34,22 +34,22 @@ python manage.py createsuperuser
 
 Requests: GET or POST (authorized users only)
 ```
-api/menu
+api/menu/
 ```
 
 Requests: GET, PUT or DELETE
 ```
-api/menu/{id} (2 you can input as an example)
+api/menu/{id}/ (2 you can input as an example)
 ```
 
 Requests: GET or POST (authorized users only)
 ```
-api/booking/tables
+api/booking/tables/
 ```
 
 Requests: GET, PUT or DELETE (authorized users only)
 ```
-api/booking/tables/{id} (same for here)
+api/booking/tables/{id}/ (same for here)
 ```
 
 Requests: POST (valid credentials)
