@@ -10,10 +10,7 @@ This is a Back-end capstone project that required me to:
 #create a virtual env using pipenv
 pipenv shell
 
-pipenv install django
-pipenv install djangorestframework
-pipenv install djoser
-pipenv install mysqlclient
+pipenv install
 ```
 
 ```
