@@ -1,16 +1,17 @@
 from django.db import models
+from django.utils import timezone
 
 class Booking(models.Model):
     name = models.CharField(max_length=255)
-    no_of_guests = models.IntegerField()
-    BookingDate = models.DateField()
+    no_of_guests = models.IntegerField(default=6)
+    BookingDate = models.DateField(default=timezone.now)
 
     class Meta:
         verbose_name = 'Booking'
         verbose_name_plural = 'Booking Records'
 
     def __str__(self):
-        return f'{self.name} for {self.number_of_guests} guests on {self.booking_date}'
+        return f'{self.name} for {self.no_of_guests} guests on {self.BookingDate}'
 
 class Menu(models.Model):
     title = models.CharField(max_length=255)
