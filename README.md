@@ -58,6 +58,11 @@ Requests: GET (html page)
 ```
 home/
 ```
+Other API endpoints for editing
+```
+menu-edit/
+menu-edit/{id}
+```
 
 Rest of the API endpoints are from Djoser
 
