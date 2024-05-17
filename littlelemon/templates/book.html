@@ -9,22 +9,19 @@
     <div class="row">
       <!--Begin col-->
       <div class="column">
-          {% csrf_token %}
           <form method="POST" id="form">
-            <!-- {% csrf_token %} -->
+            {% csrf_token %}
             <p>
-              <label for="first_name">First Name:</label>
-              <input type="text" placeholder="Your Name" maxlength="200" required="true" id="first_name">
+              <label for="name">Name:</label>
+              <input type="text" name="name" placeholder="Your Name" maxlength="255" required="true" id="name">
             </p>
             <p>
-              <label for="reservation_date">Reservation Date:</label>
-              <input type="date" placeholder="yyyy-mm-dd" required="" id="reservation_date">
+              <label for="no_of_guests">Number of guests:</label>
+              <input type="number" name="no_of_guests" placeholder="Enter number of guests" required="" id="no_of_guests" min="1" max="10">
             </p>
             <p>
-              <label for="reservation_slot">Reservation Slot:</label>
-              <select id="reservation_slot">
-                <option value="0" disabled="true">Select time</option>
-              </select>
+              <label for="BookingDate">Booking date:</label>
+              <input type="date" name="BookingDate" placeholder="yyyy-mm-dd" required="" id="BookingDate">
             </p>
             <button type="button" id="button">Reserve</button>
           </form>
@@ -40,78 +37,88 @@
       <!--End col-->
     </div>
     <!--End row-->
-
-
-
-
   </article>
 </section>
+
 <script>
-
-  const date = new Date();
-  const currentDay = date.getFullYear();
-  const currentMonth = date.getMonth().toString().padStart(1, "0") + 1;
-  const currentYear = date.getDate().toString().padStart(1, "0");
-  document.getElementById('reservation_date').value = `${currentDay}-${currentMonth}-${currentYear}`;
-
-  console.log(document.getElementById('reservation_date').value);
-  getBookings();
-
-  /*  Step 10: Part two */
-  document.getElementById('reservation_date').addEventListener('change', function(){
+  document.addEventListener('DOMContentLoaded', function() {
+    const date = new Date();
+    const currentDay = date.getDate().toString().padStart(2, "0");
+    const currentMonth = (date.getMonth() + 1).toString().padStart(2, "0");
+    const currentYear = date.getFullYear();
+    document.getElementById('BookingDate').value = `${currentYear}-${currentMonth}-${currentDay}`;
+  
     getBookings();
-  });
-
-  function getBookings() {
-    let reserved_slots = []
-    const date = document.getElementById('reservation_date').value
-    document.getElementById('today').innerHTML = date
-    
-    fetch("{% url 'bookings' %}" + '?date=' + date)
-      .then(r => r.json())
-      .then(data => {
-        reserved_slots = []
-        bookings = ''
-        /* Step 11: Part three */
-        for (const item of data) {
-          console.log(item.fields);
-          reserved_slots.push(item.fields.reservation_slot);
-          bookings += `<p>${item.fields.first_name} - ${formatTime(item.fields.reservation_slot)}</p>`;
-        } 
-        /* Step 12: Part four  */
-        let slot_options = '<option value="0" disabled="true">Select time</option>';
-        for (let i = 11; i < 20; i++) {
-          const label = formatTime(i);          
-          slot_options += `<option value="${i}" ${reserved_slots.includes(i) ? 'disabled="true"':'' }>${label}</option>`;
-        }
-        
-        document.getElementById('reservation_slot').innerHTML = slot_options
-        if(bookings == '') {
-          bookings = "No bookings"
-        }
-        document.getElementById('bookings').innerHTML = bookings
-      })
-  }
-
-  function formatTime(time) {
-    const ampm = time < 12 ? 'AM' : 'PM'
-    const t = time < 12 ? time : time > 12 ? time - 12 : time
-    const label = `${t} ${ampm}`
-    return label
-  }
-
-  document.getElementById('button').addEventListener('click', function (e) {
-    const formdata = {
-      first_name: document.getElementById('first_name').value,
-      reservation_date: document.getElementById('reservation_date').value,
-      reservation_slot: document.getElementById('reservation_slot').value,
+  
+    document.getElementById('BookingDate').addEventListener('change', function() {
+      getBookings();
+    });
+  
+    function getBookings() {
+      const date = document.getElementById('BookingDate').value;
+      document.getElementById('today').innerHTML = date;
+  
+      fetch("{% url 'bookings' %}?date=" + date, {headers: {
+    'X-Requested-With': 'XMLHttpRequest'
+  }})
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
     }
-
-    fetch("{% url 'bookings' %}", { method: 'post', body: JSON.stringify(formdata) })
-      .then(r => r.text())
-      .then(data => {
-        getBookings()
-      })
+    return response.json();
   })
-</script>
+  .then(data => {
+    let bookings = '';
+    for (const item of data) {
+      bookings += `<p>${item.name}</p> <p>Number of guests: ${item.no_of_guests}`;
+    }
+    if (bookings === '') {
+      bookings = "No bookings";
+    }
+    document.getElementById('bookings').innerHTML = bookings;
+  })
+  .catch(error => console.error('Error:', error));
+    }
+  
+    function getCookie(name) {
+      let cookieValue = null;
+      if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+          const cookie = cookies[i].trim();
+          if (cookie.substring(0, name.length + 1) === (name + '=')) {
+            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+            break;
+          }
+        }
+      }
+      return cookieValue;
+    }
+  
+    const csrftoken = getCookie('csrftoken');
+  
+    document.getElementById('button').addEventListener('click', function () {
+      const formdata = {
+        name: document.getElementById('name').value,
+        no_of_guests: document.getElementById('no_of_guests').value,
+        BookingDate: document.getElementById('BookingDate').value
+      };
+  
+      fetch("{% url 'book' %}", {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-CSRFToken': csrftoken
+        },
+        body: JSON.stringify(formdata)
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Success:', data);
+        getBookings();
+      })
+      .catch(error => console.error('Error:', error));
+    });
+  });
+  </script>
 {% endblock %}
