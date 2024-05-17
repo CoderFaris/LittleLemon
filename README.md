@@ -31,22 +31,22 @@ python manage.py createsuperuser
 
 Requests: GET or POST (authorized users only)
 ```
-api/menu/
+restaurant/menu/
 ```
 
 Requests: GET, PUT or DELETE
 ```
-api/menu/{id}/ (2 you can input as an example)
+restaurant/menu/{id}/ (2 you can input as an example)
 ```
 
 Requests: GET or POST (authorized users only)
 ```
-api/booking/tables/
+restaurant/booking/tables/
 ```
 
 Requests: GET, PUT or DELETE (authorized users only)
 ```
-api/booking/tables/{id}/ (same for here)
+restaurant/booking/tables/{id}/ (same for here)
 ```
 
 Requests: POST (valid credentials)
@@ -60,8 +60,8 @@ home/
 ```
 Other API endpoints for editing
 ```
-menu-edit/
-menu-edit/{id}
+restaurant/menu-edit/
+restaurant/menu-edit/{id}
 ```
 
 Rest of the API endpoints are from Djoser
